@@ -1,17 +1,12 @@
-import { getRepository, Repository } from "typeorm";
+import { getRepository } from "typeorm";
 import { Request, Response } from "express";
 import { UserEntity } from "../entities";
 import { validate } from 'class-validator';
 
-export class UserController {
-  private userRepository: Repository<UserEntity>;
-
-  constructor() {
-    this.userRepository = getRepository(UserEntity);
-  }
-
-  async getAll(req: Request, res: Response) {
-    const users = await this.userRepository.find();
+export default class UserController {
+  static async getAll(req: Request, res: Response) {
+    const userRepository = getRepository(UserEntity);
+    const users = await userRepository.find();
     if (users.length > 0) {
       res.send(users);
     } else {
@@ -19,19 +14,21 @@ export class UserController {
     }
   }
 
-  async getById(req: Request, res: Response) {
+  static async getById(req: Request, res: Response) {
+    const userRepository = getRepository(UserEntity);
     const { id } = req.body;
     try {
-      const user = await this.userRepository.findOneOrFail(id);
+      const user = await userRepository.findOneOrFail(id);
       res.send(user);
     } catch (e) {
       res.status(404).json({ message: 'Not result' });
     }
   }
 
-  async newUser(req: Request, res: Response) {
+  static async newUser(req: Request, res: Response) {
+    const userRepository = getRepository(UserEntity);
     const { username, password, role } = req.body;
-    const user = this.userRepository.create({ username, password, role });
+    const user = userRepository.create({ username, password, role });
 
     // Validate
     const errors = await validate(user);
@@ -42,7 +39,7 @@ export class UserController {
     // TODO: hash password
 
     try {
-      const newUser = await this.userRepository.save(user);
+      const newUser = await userRepository.save(user);
 
       res.send({ message: 'User created', user: newUser });
     } catch (e) {
@@ -51,13 +48,14 @@ export class UserController {
 
   }
 
-  async editUser(req: Request, res: Response) {
+  static async editUser(req: Request, res: Response) {
+    const userRepository = getRepository(UserEntity);
     let user: UserEntity;
     const { id } = req.params;
     const { username, role } = req.body;
 
     try {
-      user = await this.userRepository.findOneOrFail(id);
+      user = await userRepository.findOneOrFail(id);
     } catch (e) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -70,7 +68,7 @@ export class UserController {
     }
 
     try {
-      const newUser = await this.userRepository.save(user);
+      const newUser = await userRepository.save(user);
 
       res.status(201).json({ message: 'User update', user: newUser });
     } catch (e) {
@@ -78,11 +76,11 @@ export class UserController {
     }
   }
 
-  async deleteUser(req: Request, res: Response) {
+  static async deleteUser(req: Request, res: Response) {
+    const userRepository = getRepository(UserEntity);
     const { id } = req.params;
     try {
-      // Delete or Remove
-      await this.userRepository.delete(id);
+      await userRepository.delete(id);
       res.status(201).json({ message: 'User deleted' });
     } catch (e) {
       return res.status(404).json({ message: 'User not found ' });

@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
-import { User } from '../entity/User';
+import { UserEntity } from '../entities';
 
 export class AuthController {
   static async login(req: Request, res: Response) {
@@ -10,8 +10,8 @@ export class AuthController {
       return res.status(400).json({ message: 'Username and Password are required!' });
     }
 
-    const userRepository = getRepository(User);
-    let user: User;
+    const userRepository = getRepository(UserEntity);
+    let user: UserEntity;
 
     try {
       user = await userRepository.findOneOrFail({ where: { username } });

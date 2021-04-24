@@ -16,15 +16,15 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 15 })
+  @Column({ type: 'varchar', length: 150 })
   @MinLength(6)
   username: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 250 })
   @MinLength(6)
   password: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 150 })
   @IsNotEmpty()
   role: string;
 
@@ -41,9 +41,7 @@ export class UserEntity {
   }
 
   checkPassword(password: string): Promise<boolean> {
-    return compare(password.trim(), this.password.trim(), (err, same) => {
-      console.log({ err, same });
-    });
+    return compare(password, this.password);
   }
 
 }

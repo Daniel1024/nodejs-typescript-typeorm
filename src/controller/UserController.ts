@@ -31,7 +31,7 @@ export default class UserController {
     const user = userRepository.create({ username, password, role });
 
     // Validate
-    const errors = await validate(user);
+    const errors = await validate(user, { validationError: { value: false, target: false } });
     if (errors.length > 0) {
       return res.status(400).json(errors);
     }
@@ -60,7 +60,7 @@ export default class UserController {
     user.username = username;
     user.role = role;
 
-    const errors = await validate(user);
+    const errors = await validate(user, { validationError: { value: false, target: false } });
     if (errors.length > 0) {
       return res.status(400).json(errors);
     }

@@ -16,7 +16,12 @@ export class AuthController {
     try {
       user = await userRepository.findOneOrFail({ where: { username } });
     } catch (e) {
-      return res.status(400).json({ message: 'Username and Password incorrect' });
+      return res.status(400).json({ message: 'Username or Password is incorrect1' });
+    }
+
+    // Check Password
+    if (!await user.checkPassword(password)) {
+      return res.status(400).json({ message: 'Username or Password is incorrect2' });
     }
 
     res.send(user);

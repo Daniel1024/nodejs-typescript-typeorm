@@ -36,8 +36,6 @@ export default class UserController {
       return res.status(400).json(errors);
     }
 
-    // TODO: hash password
-
     try {
       const newUser = await userRepository.save(user);
 

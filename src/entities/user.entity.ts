@@ -1,5 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Unique,
+  CreateDateColumn,
+  UpdateDateColumn,
+  BeforeInsert
+} from 'typeorm';
 import { IsNotEmpty, MinLength } from 'class-validator';
+import { compare, genSalt, hash } from 'bcrypt';
 
 @Entity({ name: 'users' })
 @Unique(['username'])
@@ -24,5 +33,17 @@ export class UserEntity {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   readonly updatedAt?: Date;
+
+  @BeforeInsert()
+  async hashPassword(): Promise<void> {
+    const salt = await genSalt(10);
+    this.password = await hash(this.password.trim(), salt);
+  }
+
+  checkPassword(password: string): Promise<boolean> {
+    return compare(password.trim(), this.password.trim(), (err, same) => {
+      console.log({ err, same });
+    });
+  }
 
 }

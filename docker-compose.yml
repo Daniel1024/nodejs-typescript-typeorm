@@ -8,3 +8,14 @@ services:
       - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: root
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - database
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"

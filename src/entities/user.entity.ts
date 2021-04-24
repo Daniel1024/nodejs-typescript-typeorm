@@ -5,9 +5,9 @@ import {
   Unique,
   CreateDateColumn,
   UpdateDateColumn,
-  BeforeInsert
+  BeforeInsert, BeforeUpdate
 } from 'typeorm';
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import { compare, genSalt, hash } from 'bcrypt';
 
 @Entity({ name: 'users' })
@@ -18,6 +18,8 @@ export class UserEntity {
 
   @Column({ type: 'varchar', length: 150 })
   @MinLength(6)
+  @IsEmail()
+  @IsNotEmpty()
   username: string;
 
   @Column({ type: 'varchar', length: 250 })
@@ -35,13 +37,17 @@ export class UserEntity {
   readonly updatedAt?: Date;
 
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword(): Promise<void> {
-    const salt = await genSalt(10);
-    this.password = await hash(this.password.trim(), salt);
+    if (this.password) {
+      const salt = await genSalt(10);
+      this.password = await hash(this.password.trim(), salt);
+    }
   }
 
-  checkPassword(password: string): Promise<boolean> {
-    return compare(password, this.password);
+  async isWrongPassword(password: string): Promise<boolean> {
+    const resp = await compare(password, this.password);
+    return !resp;
   }
 
 }

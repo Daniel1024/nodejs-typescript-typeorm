@@ -80,11 +80,13 @@ export default class UserController {
     const userRepository = getRepository(UserEntity);
     const { id } = req.params;
     try {
-      await userRepository.delete(id);
-      res.status(201).json({ message: 'User deleted' });
+      await userRepository.findOneOrFail(id);
     } catch (e) {
       return res.status(404).json({ message: 'User not found ' });
     }
+
+    await userRepository.delete(id);
+    res.status(201).json({ message: 'User deleted' });
   }
 
 }

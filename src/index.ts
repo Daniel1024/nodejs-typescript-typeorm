@@ -14,9 +14,8 @@ async function bootstrap() {
       await createConnection();
       break;
     } catch (err) {
-      console.log(err);
       retries -= 1;
-      console.log(`retries left: ${retries}`);
+      console.log(`retries left: ${ retries }`);
       // wait 5 seconds
       await new Promise((res) => setTimeout(res, 5000));
     }
@@ -34,7 +33,7 @@ async function bootstrap() {
   app.use('/', routes);
 
   // start express server
-  app.listen(PORT, () => console.log(`Example app listening at http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`Example app listening at http://localhost:${ PORT }`));
 }
 
 bootstrap()

@@ -13,13 +13,20 @@ services:
       - typeorm
   database:
     image: mysql:5.7
-    ports:
-      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: login_node
+      MYSQL_USER: styde
+      MYSQL_PASSWORD: secret
+    ports:
+      - 3306:3306
+    volumes:
+      - mysqldata:/var/lib/mysql
     networks:
       - typeorm
 networks:
   typeorm:
     driver: "bridge"
+volumes:
+  mysqldata:
+    driver: "local"

@@ -8,7 +8,19 @@ import routes from './routes';
 const PORT = process.env.APP_PORT || 3000;
 
 async function bootstrap() {
-  await createConnection();
+  let retries = 5;
+  while (retries) {
+    try {
+      await createConnection();
+      break;
+    } catch (err) {
+      console.log(err);
+      retries -= 1;
+      console.log(`retries left: ${retries}`);
+      // wait 5 seconds
+      await new Promise((res) => setTimeout(res, 5000));
+    }
+  }
 
   // create express app
   const app = express();

@@ -32,8 +32,9 @@ export class AuthController {
     const token = sign({ userId: user.id, username: user.username }, jwt.secret, {
       expiresIn: '1h'
     });
+    delete user.password;
 
-    res.json({ message: 'OK', token });
+    res.json({ message: 'OK', token, user });
   }
 
   static async changePassword(req: Request, res: Response) {
